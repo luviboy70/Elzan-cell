@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6d28d9">
+<link rel="manifest" href="manifest.json">
+<title>Elzan Cell</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f3ff;color:#171717}
+.app{max-width:520px;margin:auto;min-height:100vh;background:#fff}
+header{background:linear-gradient(135deg,#5b21b6,#7c3aed);color:#fff;padding:22px 18px 28px;border-radius:0 0 24px 24px}
+.brand{font-size:24px;font-weight:800}.small{opacity:.85;font-size:13px;margin-top:4px}
+.balance{margin-top:18px;background:#fff;color:#32105e;border-radius:18px;padding:16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 22px #0002}
+.balance b{font-size:22px}.topup{background:#7c3aed;color:#fff;border:0;border-radius:12px;padding:10px 14px;font-weight:700}
+main{padding:18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{border:1px solid #eee;border-radius:16px;padding:16px 8px;text-align:center;background:#fff;box-shadow:0 3px 12px #0000000b}.ico{font-size:28px}.label{font-size:13px;font-weight:700;margin-top:7px}
+h2{font-size:18px;margin:24px 0 12px}.product{display:flex;justify-content:space-between;align-items:center;border:1px solid #eee;border-radius:14px;padding:13px;margin-bottom:9px}.product b{font-size:15px}.price{color:#6d28d9;font-weight:800}.buy{border:0;background:#6d28d9;color:#fff;border-radius:10px;padding:8px 12px;font-weight:700}
+nav{position:sticky;bottom:0;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 4px calc(10px + env(safe-area-inset-bottom));margin-top:20px}nav button{border:0;background:none;font-size:11px;color:#666}nav button.active{color:#6d28d9;font-weight:800}nav span{display:block;font-size:20px;margin-bottom:3px}
+.page{display:none}.page.active{display:block}.empty{text-align:center;padding:40px 15px;color:#777}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">⚡ Elzan Cell</div><div class="small">Pulsa • Kuota • Token PLN</div>
+  <div class="balance"><div><div class="small" style="color:#666">Saldo Agen</div><b id="saldo">Rp 100.000</b></div><button class="topup" onclick="topup()">+ Deposit</button></div>
+</header>
+<main>
+<section id="home" class="page active">
+<h2>Menu Utama</h2>
+<div class="grid">
+<div class="card" onclick="show('pulsa')"><div class="ico">📱</div><div class="label">Pulsa</div></div>
+<div class="card" onclick="show('kuota')"><div class="ico">🌐</div><div class="label">Kuota</div></div>
+<div class="card" onclick="show('pln')"><div class="ico">⚡</div><div class="label">Token PLN</div></div>
+<div class="card" onclick="show('riwayat')"><div class="ico">🧾</div><div class="label">Riwayat</div></div>
+<div class="card" onclick="show('profil')"><div class="ico">👤</div><div class="label">Profil</div></div>
+<div class="card" onclick="alert('Fitur laporan akan tersedia pada versi berikutnya.')"><div class="ico">📊</div><div class="label">Laporan</div></div>
+</div>
+<h2>Produk Populer</h2>
+<div id="popular"></div>
+</section>
+
+<section id="pulsa" class="page"><h2>📱 Pulsa</h2><div id="pulsaList"></div></section>
+<section id="kuota" class="page"><h2>🌐 Paket Kuota</h2><div id="kuotaList"></div></section>
+<section id="pln" class="page"><h2>⚡ Token PLN</h2><div id="plnList"></div></section>
+<section id="riwayat" class="page"><h2>🧾 Riwayat Transaksi</h2><div id="history"><div class="empty">Belum ada transaksi.</div></div></section>
+<section id="profil" class="page"><h2>👤 Profil</h2><div class="card" style="text-align:left"><b>Elzan Cell</b><p>Username: admin</p><p>Nomor WhatsApp: 089529021370</p><p>Status: Agen Aktif</p></div></section>
+</main>
+<nav>
+<button class="active" onclick="show('home',this)"><span>🏠</span>Beranda</button>
+<button onclick="show('pulsa',this)"><span>📱</span>Pulsa</button>
+<button onclick="show('kuota',this)"><span>🌐</span>Kuota</button>
+<button onclick="show('riwayat',this)"><span>🧾</span>Riwayat</button>
+<button onclick="show('profil',this)"><span>👤</span>Profil</button>
+</nav>
+</div>
+<script>
+let saldo=100000, hist=[];
+const pulsa=[['Pulsa 5K',6500],['Pulsa 10K',11500],['Pulsa 20K',21000],['Pulsa 50K',50500],['Pulsa 100K',100000]];
+const kuota=[['AXIS 8GB / 2 Hari',14000],['AXIS 13GB / 2 Hari',15000],['Indosat 20GB / 3 Hari',20000],['Indosat 30GB / 5 Hari',31000],['XL 7GB / 28 Hari',36000],['Telkomsel 15GB / 28 Hari',51500]];
+const pln=[['Token PLN 20K',23000],['Token PLN 50K',53000],['Token PLN 100K',103000]];
+function rupiah(n){return 'Rp '+n.toLocaleString('id-ID')}
+function render(id,arr){document.getElementById(id).innerHTML=arr.map((x,i)=>`<div class="product"><div><b>${x[0]}</b><div class="price">${rupiah(x[1])}</div></div><button class="buy" onclick="buy('${x[0]}',${x[1]})">Beli</button></div>`).join('')}
+function buy(name,price){if(saldo<price){alert('Saldo tidak cukup. Silakan deposit.');return} const nomor=prompt('Masukkan nomor pelanggan:'); if(!nomor)return; saldo-=price; hist.unshift({name,price,nomor,time:new Date().toLocaleString('id-ID')}); document.getElementById('saldo').textContent=rupiah(saldo); renderHistory(); alert('Transaksi demo berhasil!');}
+function renderHistory(){document.getElementById('history').innerHTML=hist.length?hist.map(x=>`<div class="product"><div><b>${x.name}</b><div>${x.nomor}<br><small>${x.time}</small></div></div><div class="price">-${rupiah(x.price)}</div></div>`).join(''):'<div class="empty">Belum ada transaksi.</div>'}
+function topup(){saldo+=50000;document.getElementById('saldo').textContent=rupiah(saldo);alert('Deposit demo Rp 50.000 berhasil.')}
+function show(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo(0,0)}
+render('pulsaList',pulsa);render('kuotaList',kuota);render('plnList',pln);render('popular',kuota.slice(0,3));renderHistory();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body></html>
